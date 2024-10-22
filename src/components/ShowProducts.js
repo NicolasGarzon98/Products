@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
 const ShowProducts = () => {
-    const url = 'http://localhost:5002/api/products';
+    const url = 'https://0q0ifjejyc.execute-api.us-east-1.amazonaws.com/Etapa1';
     const [products, setProducts] = useState([]);
     const [formValues, setFormValues] = useState({ id: '', name: '', description: '', price: '' });
     const [operation, setOperation] = useState(1);
