@@ -130,7 +130,7 @@ const ShowProducts = () => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        puede decir lo que sea, actualización en vivo
+                        Laboratorio de productos - BBVA
                     </Typography>
                     <Button variant="contained" color="secondary" onClick={() => openModal(1)}>
                         Añadir Producto
