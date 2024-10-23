@@ -1,3 +1,31 @@
+{
+    "id": "1"
+}
+
+{
+    "id": "5",
+    "nombre": "Postman",
+    "descripcion": "carga desde postman",
+    "precio": 20
+}
+
+
+
+curl -X GET \
+   https://0q0ifjejyc.execute-api.us-east-1.amazonaws.com/dev/Products \
+   -H "Content-Type: application/json" \
+   -d '{"id": "1"}' 
+
+curl -X POST \
+  https://0q0ifjejyc.execute-api.us-east-1.amazonaws.com/dev/Products \
+  -H "Content-Type: application/json" \
+  -d '{"id": "5", "nombre": "Producto h", "descripcion": "Descripción del producto h", "precio": 19}'
+
+
+
+
+
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -8,12 +36,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import { v4 as uuidv4 } from 'uuid'; // Importar uuid
 
 const ShowProducts = () => {
     const url = 'https://0q0ifjejyc.execute-api.us-east-1.amazonaws.com/dev/Products';
     const [products, setProducts] = useState([]);
-    const [formValues, setFormValues] = useState({ id: '', nombre: '', descripcion: '', precio: 0 });
+    const [formValues, setFormValues] = useState({ id: '', name: '', description: '', price: '' });
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('Registrar Producto');
     const [modalOpen, setModalOpen] = useState(false); 
@@ -25,37 +52,29 @@ const ShowProducts = () => {
     const getProducts = async () => {
         try {
             const response = await axios.get(url);
-            //setProducts(response.data);
-            const data = JSON.parse(response.data.body); // Extraer y parsear el body
-            console.log('Try1: Productos actualizados:', response.data);
-            setProducts(Array.isArray(data) ? data : [])
+            setProducts(response.data);
         } catch (error) {
             console.error('Error al obtener los productos:', error);
         }
     };
 
-    const openModal = (op, id = '', nombre = '', descripcion = '', precio = '') => {
-        setFormValues({ id, nombre, descripcion, precio });
+    const openModal = (op, id = '', name = '', description = '', price = '') => {
+        setFormValues({ id, name, description, price });
         setOperation(op);
         setTitle(op === 1 ? 'Registrar Producto' : 'Editar Producto');
         setModalOpen(true);
     };
 
     const validar = () => {
-        const { nombre, descripcion, precio } = formValues;
-        if (nombre.trim() === '') {
+        const { name, description, precio } = formValues;
+        if (name.trim() === '') {
             show_alerta('Escribe el nombre del producto', 'warning');
-        } else if (descripcion.trim() === '') {
-            show_alerta('Escribe la descripciÃ³n del producto', 'warning');
+        } else if (description.trim() === '') {
+            show_alerta('Escribe la descripción del producto', 'warning');
         } else if (precio === '') {
             show_alerta('Escribe el precio del producto', 'warning');
         } else {
-            const parametros = { 
-                id: uuidv4(), // Generar un nuevo ID
-                nombre: nombre.trim(), 
-                descripcion: descripcion.trim(), 
-                precio: parseFloat(precio) // AsegÃºrate de convertir a nÃºmero
-            };
+            const parametros = { nombre: name.trim(), descripcion: description.trim(), precio };
             if (operation === 1) {
                 enviarSolicitud('POST', parametros);
             } else {
@@ -71,14 +90,11 @@ const ShowProducts = () => {
 
             const { status, statusText } = response
 
-            show_alerta(statusText || 'OperaciÃ³n exitosa', 'success');
+            show_alerta(statusText || 'Operación exitosa', 'success');
 
-            //if (status == 200) {
-            //    getProducts();
-            //    cerrarModal();  
-            if (status === 200 || status === 201) {
-                await getProducts(); // AsegÃºrate de que se actualicen los productos
-                cerrarModal(); 
+            if (status == 200) {
+                getProducts();
+                cerrarModal();  
             }
         } catch (error) {
             show_alerta('Error en la solicitud', 'error');
@@ -86,17 +102,16 @@ const ShowProducts = () => {
         }
     };
 
-    const deleteProduct = (id, nombre) => {
+    const deleteProduct = (id, name) => {
         Swal.fire({
-            title: `Â¿Seguro de eliminar el producto ${nombre}?`,
+            title: `¿Seguro de eliminar el producto ${name}?`,
             icon: 'question',
-            text: 'No se podrÃ¡ dar marcha atrÃ¡s',
+            text: 'No se podrá dar marcha atrás',
             showCancelButton: true,
-            confirmButtonText: 'SÃ­, eliminar',
+            confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log("id eliminar: ",result, id);
                 enviarSolicitud('DELETE', {}, id);
             } else {
                 show_alerta('El producto NO fue eliminado', 'info');
@@ -106,7 +121,7 @@ const ShowProducts = () => {
 
     const cerrarModal = () => {
         setModalOpen(false); 
-        setFormValues({ id: '', nombre: '', descripcion: '', precio: 0 });
+        setFormValues({ id: '', name: '', description: '', price: '' });
     };
 
     const show_alerta = (mensaje, icon) => {
@@ -123,10 +138,10 @@ const ShowProducts = () => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        puede decir lo que sea, actualizaciÃ³n en vivo
+                        puede decir lo que sea, actualización en vivo
                     </Typography>
                     <Button variant="contained" color="secondary" onClick={() => openModal(1)}>
-                        AÃ±adir Producto
+                        Añadir Producto
                     </Button>
                 </Toolbar>
             </AppBar>
