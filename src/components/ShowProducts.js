@@ -56,16 +56,23 @@ const ShowProducts = () => {
                 descripcion: descripcion.trim(), 
                 precio: parseFloat(precio) // Asegúrate de convertir a número
             };
+            const parametrosPut = { 
+                nombre: nombre.trim(), 
+                descripcion: descripcion.trim(), 
+                precio: parseFloat(precio) // Asegúrate de convertir a número
+            };
+
             if (operation === 1) {
                 enviarSolicitud('POST', parametros);
             } else {
-                enviarSolicitud('PUT', parametros, formValues.id);
+                enviarSolicitud('PUT', parametrosPut, formValues.id);
             }
         }
     };
+    
 
     const enviarSolicitud = async (metodo, parametros, productId = null) => {
-        const requestUrl = productId ? `${url}/${productId}` : url;
+        const requestUrl = productId ? `${url}?id=${productId}` : url;
         try {
             const response = await axios({ method: metodo, url: requestUrl, data: parametros });
 
