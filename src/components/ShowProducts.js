@@ -8,11 +8,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import { v4 as uuidv4 } from 'uuid'; // Importar uuid
 
 const ShowProducts = () => {
-    const url = 'https://0q0ifjejyc.execute-api.us-east-1.amazonaws.com/Etapa1';
+    const url = 'https://0q0ifjejyc.execute-api.us-east-1.amazonaws.com/dev/Products';
     const [products, setProducts] = useState([]);
-    const [formValues, setFormValues] = useState({ id: '', name: '', description: '', price: '' });
+    const [formValues, setFormValues] = useState({ id: '', nombre: '', descripcion: '', precio: 0 });
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('Registrar Producto');
     const [modalOpen, setModalOpen] = useState(false); 
@@ -25,28 +26,34 @@ const ShowProducts = () => {
         try {
             const response = await axios.get(url);
             setProducts(response.data);
+            console.log('Try1: Productos actualizados:', response.data);
         } catch (error) {
             console.error('Error al obtener los productos:', error);
         }
     };
 
-    const openModal = (op, id = '', name = '', description = '', price = '') => {
-        setFormValues({ id, name, description, price });
+    const openModal = (op, id = '', nombre = '', descripcion = '', precio = '') => {
+        setFormValues({ id, nombre, descripcion, precio });
         setOperation(op);
         setTitle(op === 1 ? 'Registrar Producto' : 'Editar Producto');
         setModalOpen(true);
     };
 
     const validar = () => {
-        const { name, description, price } = formValues;
-        if (name.trim() === '') {
+        const { nombre, descripcion, precio } = formValues;
+        if (nombre.trim() === '') {
             show_alerta('Escribe el nombre del producto', 'warning');
-        } else if (description.trim() === '') {
+        } else if (descripcion.trim() === '') {
             show_alerta('Escribe la descripción del producto', 'warning');
-        } else if (price === '') {
+        } else if (precio === '') {
             show_alerta('Escribe el precio del producto', 'warning');
         } else {
-            const parametros = { name: name.trim(), description: description.trim(), price };
+            const parametros = { 
+                id: uuidv4(), // Generar un nuevo ID
+                nombre: nombre.trim(), 
+                descripcion: descripcion.trim(), 
+                precio: parseFloat(precio) // Asegúrate de convertir a número
+            };
             if (operation === 1) {
                 enviarSolicitud('POST', parametros);
             } else {
@@ -64,9 +71,12 @@ const ShowProducts = () => {
 
             show_alerta(statusText || 'Operación exitosa', 'success');
 
-            if (status == 200) {
-                getProducts();
-                cerrarModal();  
+            //if (status == 200) {
+            //    getProducts();
+            //    cerrarModal();  
+            if (status === 200 || status === 201) {
+                await getProducts(); // Asegúrate de que se actualicen los productos
+                cerrarModal(); 
             }
         } catch (error) {
             show_alerta('Error en la solicitud', 'error');
@@ -74,9 +84,9 @@ const ShowProducts = () => {
         }
     };
 
-    const deleteProduct = (id, name) => {
+    const deleteProduct = (id, nombre) => {
         Swal.fire({
-            title: `¿Seguro de eliminar el producto ${name}?`,
+            title: `¿Seguro de eliminar el producto ${nombre}?`,
             icon: 'question',
             text: 'No se podrá dar marcha atrás',
             showCancelButton: true,
@@ -93,7 +103,7 @@ const ShowProducts = () => {
 
     const cerrarModal = () => {
         setModalOpen(false); 
-        setFormValues({ id: '', name: '', description: '', price: '' });
+        setFormValues({ id: '', nombre: '', descripcion: '', precio: 0 });
     };
 
     const show_alerta = (mensaje, icon) => {
@@ -110,7 +120,7 @@ const ShowProducts = () => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        puede decir lo que sea
+                        puede decir lo que sea, actualización en vivo
                     </Typography>
                     <Button variant="contained" color="secondary" onClick={() => openModal(1)}>
                         Añadir Producto

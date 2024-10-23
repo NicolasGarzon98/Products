@@ -22,32 +22,32 @@ const ProductForm = ({ title, formValues, setFormValues, validar, modalOpen, cer
                 <TextField
                     autoFocus
                     margin="dense"
-                    name="name"
+                    name="nombre"
                     label="Nombre del Producto"
                     type="text"
                     fullWidth
                     variant="outlined"
-                    value={formValues.name}
+                    value={formValues.nombre}
                     onChange={handleInputChange}
                 />
                 <TextField
                     margin="dense"
-                    name="description"
+                    name="descripcion"
                     label="Descripción"
                     type="text"
                     fullWidth
                     variant="outlined"
-                    value={formValues.description}
+                    value={formValues.descripcion}
                     onChange={handleInputChange}
                 />
                 <TextField
                     margin="dense"
-                    name="price"
+                    name="precio"
                     label="Precio"
                     type="number"
                     fullWidth
                     variant="outlined"
-                    value={formValues.price}
+                    value={formValues.precio}
                     onChange={handleInputChange}
                 />
             </DialogContent>

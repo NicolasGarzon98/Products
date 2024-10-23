@@ -28,14 +28,14 @@ const ProductTable = ({ products, openModal, deleteProduct }) => {
                     {products.map((product, index) => (
                         <TableRow key={product.id}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell>{product.name}</TableCell>
-                            <TableCell>{product.description}</TableCell>
-                            <TableCell align="right">${new Intl.NumberFormat('es-MX').format(product.price)}</TableCell>
+                            <TableCell>{product.nombre}</TableCell>
+                            <TableCell>{product.descripcion}</TableCell>
+                            <TableCell align="right">${new Intl.NumberFormat('es-MX').format(product.precio)}</TableCell>
                             <TableCell align="center">
-                                <IconButton color="primary" onClick={() => openModal(2, product.id, product.name, product.description, product.price)}>
+                                <IconButton color="primary" onClick={() => openModal(2, product.id, product.nombre, product.descripcion, product.precio)}>
                                     <EditIcon />
                                 </IconButton>
-                                <IconButton color="secondary" onClick={() => deleteProduct(product.id, product.name)}>
+                                <IconButton color="secondary" onClick={() => deleteProduct(product.id, product.nombre)}>
                                     <DeleteIcon />
                                 </IconButton>
                             </TableCell>
